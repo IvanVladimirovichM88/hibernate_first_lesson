@@ -23,7 +23,7 @@ public class Product {
     @Column(name = "price_fld")
     private Double price;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
 
@@ -40,6 +40,13 @@ public class Product {
         this.name = name;
         this.quantity = quantity;
         this.price = price;
+    }
+
+    public Product(String name, Long quantity, Double price, Category category) {
+        this.name = name;
+        this.quantity = quantity;
+        this.price = price;
+        this.category = category;
     }
 
     public Long getId() {

@@ -1,12 +1,16 @@
 package ru.geekbrains.lesson4.services.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.geekbrains.lesson4.entity.Category;
 import ru.geekbrains.lesson4.entity.Product;
 import ru.geekbrains.lesson4.repositories.ProductRepository;
 import ru.geekbrains.lesson4.services.ProductService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service("productService")
@@ -51,7 +55,39 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public List<Product> findAllByPriceGreaterThan(Double price) {
+    public Product findProductWithMaxPriceInCategory(Category category) {
+        return productRepository.findTopByCategoryOrderByPriceDesc(category);
+    }
+
+    @Override
+    @Transactional
+    public Product findProductWithMinPriceInCategory(Category category) {
+        return productRepository.findTopByCategoryOrderByPriceAsc(category);
+    }
+
+    @Override
+    public List<Product> findProductsWithMinAndMaxPriceInCategory(Category category) {
+        List<Product> products = new ArrayList<>(2);
+        products.add(this.findProductWithMinPriceInCategory(category));
+        products.add(this.findProductWithMaxPriceInCategory(category));
+        return products;
+    }
+
+    @Override
+    @Transactional
+    public Product findProductWithMaxPrice() {
+        return productRepository.findTopByOrderByPriceDesc();
+    }
+
+    @Override
+    @Transactional
+    public Product findProductWithMinPrice() {
+        return productRepository.findTopByOrderByPriceAsc();
+    }
+
+    @Override
+    @Transactional
+    public List<Product> findAllByPriceGreaterThanEqual(Double price) {
         return productRepository.findAllByPriceGreaterThanEqual(price);
     }
 
@@ -59,5 +95,16 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public List<Product> findAllByPriceGreaterThanOrderByPriceDesc(Double price) {
         return productRepository.findAllByPriceGreaterThanOrderByPriceDesc(price);
+    }
+
+    @Override
+    @Transactional
+    public List<Product> findAllByCategory(Category category) {
+        return productRepository.findAllByCategory(category);
+    }
+
+    @Override
+    public Page<Product> findAllByCategory(Category category, Pageable pageable) {
+        return productRepository.findAllByCategory(category, pageable);
     }
 }
